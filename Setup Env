@@ -24,3 +24,49 @@ curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.17.1 TARGET_ARCH=x86_64
 cd istio-1.17.1; export PATH=$PWD/bin:$PATH
 
 istioctl install --set profile=default -y
+
+ilabishoyi@ilas-MBP istio-1.17.1 % ls -lrt 
+total 936
+drwxr-xr-x   5 ilabishoyi  staff     160 22 Feb 09:58 tools
+drwxr-xr-x  25 ilabishoyi  staff     800 22 Feb 09:58 samples
+drwxr-xr-x   5 ilabishoyi  staff     160 22 Feb 09:58 manifests
+-rw-r-----   1 ilabishoyi  staff     925 22 Feb 09:58 manifest.yaml
+drwxr-x---   3 ilabishoyi  staff      96 22 Feb 09:58 bin
+-rw-r--r--   1 ilabishoyi  staff    6595 22 Feb 09:58 README.md
+-rw-r--r--   1 ilabishoyi  staff   11348 22 Feb 09:58 LICENSE
+-rw-r--r--   1 ilabishoyi  staff  449565 27 Feb 14:27 generated-manifest.yaml
+-rw-r--r--   1 ilabishoyi  staff    1488 27 Feb 21:21 istio1.7.yaml
+
+
+ilabishoyi@ilas-MBP bin % istioctl operator init
+Installing operator controller in namespace: istio-operator using image: docker.io/istio/operator:1.17.1
+Operator controller will watch namespaces: istio-system
+✔ Istio operator installed                                                                                                                                                             
+✔ Installation complete
+
+ilabishoyi@ilas-MBP bin % cat <<EOF > istio-cni.yaml
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+spec:
+  components:
+    cni:
+      enabled: true
+  values:
+    cni:
+      excludeNamespaces:
+       - istio-system
+       - kube-system
+      logLevel: info
+EOF
+
+
+ilabishoyi@ilas-MBP bin % istioctl install -f istio-cni.yaml
+This will install the Istio 1.17.1 default profile with ["Istio core" "Istiod" "CNI" "Ingress gateways"] components into the cluster. Proceed? (y/N) y
+✔ Istio core installed                                                                                                                                                                 
+✔ Istiod installed                                                                                                                                                                     
+✔ Ingress gateways installed                                                                                                                                                           
+✔ CNI installed                                                                                                                                                                        
+✔ Installation complete                                                                                                                                                                Making this installation the default for injection and validation.
+
+Thank you for installing Istio 1.17.  Please take a few minutes to tell us about your install/upgrade experience!  https://forms.gle/hMHGiwZHPU7UQRWe9
+ilabishoyi@ilas-MBP bin % 
